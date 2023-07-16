@@ -1,33 +1,37 @@
 package org.example;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import org.example.orchestrator.Oas3Orchestrator;
+
+import java.io.*;
+import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
-        if (args.length != 1) {
-            System.out.println("Please provide a file path.");
-            return;
-        }
+    public static void main(String[] args) throws IOException {
 
-        String filePath = args[0];
+//        Scanner scanner = new Scanner(System.in);
+//        System.out.printf("Enter the ramlv1 source file path:");
+//        String sourceFilePath = scanner.nextLine();
+//        System.out.printf("Enter the swagger v3 destination file path:");
+//        String destFilePath = scanner.nextLine();
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-             BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
+        String sourceFilePath = "C:\\Users\\Lewis B\\Github_projs\\raml1oas3\\src\\main\\resources\\examples\\source.raml";
+        String destFilePath = "C:\\Users\\Lewis B\\Github_projs\\raml1oas3\\src\\main\\resources\\examples\\dest.yaml";
+
+        try (BufferedReader br = new BufferedReader(new FileReader(sourceFilePath.trim()));
+             BufferedWriter bw = new BufferedWriter(new FileWriter(destFilePath.trim()))) {
 
             String line;
             while ((line = br.readLine()) != null) {
                 bw.write(line);
                 bw.newLine();
+                bw.flush();
             }
 
             System.out.println("File written successfully.");
-
         } catch (IOException e) {
             System.out.println("Error writing to file: " + e.getMessage());
         }
+
+        Oas3Orchestrator.createOas3();
     }
 }

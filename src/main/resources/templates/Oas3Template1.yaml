@@ -1,0 +1,12 @@
+openapi: 3.0.0
+info:
+  title: null
+  version: null
+  description: null
+servers:
+  - url: null
+paths:
+components:
+  schemas:
+  securitySchemes:
+security:
