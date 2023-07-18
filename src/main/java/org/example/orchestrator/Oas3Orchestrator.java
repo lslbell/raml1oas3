@@ -20,7 +20,7 @@ public class Oas3Orchestrator {
 
     static Yaml yaml = new Yaml();
 
-    public static void createOas3() throws IOException { //need to think about optimisation
+    public static void createOas3() throws IOException { // need to think about optimisation
         String oas3FilePath = "src/main/resources/templates/Oas3Template1.yaml";
         String raml1FilePath = "C:\\Users\\Lewis B\\Github_projs\\raml1oas3\\src\\main\\resources\\examples\\source.raml";
         String destFilePath = "C:\\Users\\Lewis B\\Github_projs\\raml1oas3\\src\\main\\resources\\templates\\destTarget.yaml";
