@@ -1,6 +1,5 @@
 package org.example.orchestrator;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
@@ -11,12 +10,13 @@ import org.raml.v2.api.model.v10.api.Api;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Oas3Orchestrator {
 
-    static Map<Object, Object> raml1Data;
-    static Map<String, Object> oas3Template;
+    static LinkedHashMap<Object, Object> raml1Data;
+    static LinkedHashMap<String, Object> oas3Template;
 
     static Yaml yaml = new Yaml();
 
@@ -25,7 +25,7 @@ public class Oas3Orchestrator {
         String raml1FilePath = "C:\\Users\\Lewis B\\Github_projs\\raml1oas3\\src\\main\\resources\\examples\\source.raml";
         String destFilePath = "C:\\Users\\Lewis B\\Github_projs\\raml1oas3\\src\\main\\resources\\templates\\destTarget.yaml";
 
-        oas3Template = loadOas3Template(oas3FilePath);
+        oas3Template = (LinkedHashMap<String, Object>) loadOas3Template(oas3FilePath);
         readRaml1File(raml1FilePath);
         writeOas3ToFile(destFilePath);
     }
@@ -48,10 +48,14 @@ public class Oas3Orchestrator {
         } else {
             Api api = ramlModelResult.getApiV10();
 
-            Map<String, Object> info = (Map<String, Object>) oas3Template.get("info");
+            //info -- cannot be null! -- needs a null check
+            LinkedHashMap<String, Object> info = (LinkedHashMap<String, Object>) oas3Template.get("info");
             info.put("title", api.title().value().toString().trim());
+            info.put("version", api.version().value().toString().trim());
+            info.put("description", api.description().value().toString().trim());
             oas3Template.put("info", info);
 
+            //servers
             String baseUri = api.baseUri().value().toString().trim();
             Object[] servers = new Object[]{baseUri};
             oas3Template.put("servers", servers);

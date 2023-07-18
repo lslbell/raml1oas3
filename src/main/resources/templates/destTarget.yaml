@@ -1,10 +1,9 @@
 openapi: "3.0.0"
 info:
   title: "This is a sample api"
-  version: null
-  description: null
+  version: "1.0"
+  description: "top level description for api"
 servers:
-- "https://api.example.com/v1"
 - "https://api.example.com/v1"
 paths: null
 components:
