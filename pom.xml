@@ -9,8 +9,8 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.source>18</maven.compiler.source>
-        <maven.compiler.target>18</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -33,7 +33,6 @@
             <version>2.12.3</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.raml/raml-parser-2 -->
         <dependency>
             <groupId>org.raml</groupId>
             <artifactId>raml-parser-2</artifactId>
