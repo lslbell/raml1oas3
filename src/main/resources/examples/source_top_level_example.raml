@@ -1,0 +1,52 @@
+#%RAML 1.0
+title: Sample API
+version: v1
+
+documentation:
+ - title: Something or another
+   content: a ref maybe
+
+baseUri: https://api.example.com/{version}
+
+mediaType: application/json
+
+protocols: [HTTP, HTTPS]
+
+securitySchemes:
+  - apiKey:
+      type: apiKey
+      name: X-API-Key
+      in: header
+SecuredBy: null
+
+security:
+  - apiKey: []
+
+types:
+  ObjectType:
+    type: object
+    properties:
+      id: integer
+      name: string
+
+/endpoint:
+  displayName: Example Endpoint
+  description: Sample endpoint description
+  get:
+    description: Get resource by ID
+    responses:
+      200:
+        body:
+          application/json:
+            type: ObjectType[]
+  post:
+    description: Create a new resource
+    securedBy: [apiKey]
+    body:
+      application/json:
+        type: ObjectType
+    responses:
+      201:
+        body:
+          application/json:
+            type: ObjectType

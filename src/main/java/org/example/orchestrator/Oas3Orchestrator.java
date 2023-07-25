@@ -3,77 +3,70 @@ package org.example.orchestrator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
-import org.raml.v2.api.RamlModelBuilder;
-import org.raml.v2.api.RamlModelResult;
-import org.raml.v2.api.model.common.ValidationResult;
-import org.raml.v2.api.model.v10.api.Api;
+import lombok.Getter;
+import lombok.Setter;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
+//webapi-parser stuff
+import webapi.Raml10;
+import webapi.WebApiBaseUnit;
+import webapi.WebApiDocument;
+
+@Getter
+@Setter
 public class Oas3Orchestrator {
 
     static LinkedHashMap<Object, Object> raml1Data;
     static LinkedHashMap<String, Object> oas3Template;
-
+    static String mediaType;
     static Yaml yaml = new Yaml();
 
-    public static void createOas3() throws IOException { // need to think about optimisation
-        String oas3FilePath = "src/main/resources/templates/Oas3Template1.yaml";
-        String raml1FilePath = "C:\\Users\\Lewis B\\Github_projs\\raml1oas3\\src\\main\\resources\\examples\\source.raml";
-        String destFilePath = "C:\\Users\\Lewis B\\Github_projs\\raml1oas3\\src\\main\\resources\\templates\\destTarget.yaml";
+    public static void createOas3(String sourceRaml1FilePath, String destOasFilePath) throws IOException, ExecutionException, InterruptedException { // need to think about optimisation
+        final String oas3FilePath = "src/main/resources/templates/Oas3Template1.yaml";
 
-        oas3Template = (LinkedHashMap<String, Object>) loadOas3Template(oas3FilePath);
-        readRaml1File(raml1FilePath);
-        writeOas3ToFile(destFilePath);
+        oas3Template = loadOas3Template(oas3FilePath);
+//        readRaml1File(sourceRaml1FilePath);
+//        writeOas3ToFile(destOasFilePath);'
+
     }
 
-    public static Map<String, Object> loadOas3Template(String filePath) throws FileNotFoundException {
+    public static LinkedHashMap<String, Object> loadOas3Template(String filePath) throws FileNotFoundException {
         InputStream inputStream = new FileInputStream(filePath);
-        Map<String, Object> template = yaml.load(inputStream);
+        LinkedHashMap<String, Object> template = yaml.load(inputStream);
 
         return template;
     }
 
-    public static void readRaml1File(String filePath) {
+    public static void readRaml1File(String filePath) throws ExecutionException, InterruptedException {
+        try {
+//            File ramlFile = new File(filePath);
 
-        RamlModelResult ramlModelResult = new RamlModelBuilder().buildApi(filePath);
+            final WebApiBaseUnit result = Raml10.parse(filePath).get();
 
-        if (ramlModelResult.hasErrors()) {
-            for (ValidationResult validationResult : ramlModelResult.getValidationResults()) {
-                System.out.println("Error parsing raml v1: " + validationResult.getMessage());
-            }
-        } else {
-            Api api = ramlModelResult.getApiV10();
+            // Log parsed model API
+            System.out.println("Parsed Raml10 file. Expected unit encoding webapi: " + ((WebApiDocument) result).encodes());
 
-            //info -- cannot be null! -- needs a null check
-            LinkedHashMap<String, Object> info = (LinkedHashMap<String, Object>) oas3Template.get("info");
-            info.put("title", api.title().value().toString().trim());
-            info.put("version", api.version().value().toString().trim());
-            info.put("description", api.description().value().toString().trim());
-            oas3Template.put("info", info);
-
-            //servers
-            String baseUri = api.baseUri().value().toString().trim();
-            Object[] servers = new Object[]{baseUri};
-            oas3Template.put("servers", servers);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    public static void writeOas3ToFile(String filePath) throws IOException {
-        // Create an instance of ObjectMapper with YAMLFactory
-        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
-
-        // Configure YAML generator settings
-        YAMLGenerator yamlGenerator = ((YAMLFactory) objectMapper.getFactory()).createGenerator(System.out);
-        yamlGenerator.useDefaultPrettyPrinter();  // Enable pretty printing
+    public static void writeOas3MapToFile(String outputPath) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER) // Disable writing document start marker
+                .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES) // Minimize quotes
+                .enable(YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS) // Quote numbers as strings
+                .enable(YAMLGenerator.Feature.USE_NATIVE_TYPE_ID) // Use native type ID
+                .configure(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR, true)
+        );
 
         try {
             String yamlString = objectMapper.writeValueAsString(oas3Template);
 
-            try (FileWriter fileWriter = new FileWriter(filePath)) {
+            try (FileWriter fileWriter = new FileWriter(outputPath)) {
                 fileWriter.write(yamlString);
             }
         } catch (IOException e) {

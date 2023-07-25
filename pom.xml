@@ -15,6 +15,7 @@
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
@@ -34,12 +35,35 @@
         </dependency>
 
         <dependency>
-            <groupId>org.raml</groupId>
-            <artifactId>raml-parser-2</artifactId>
-            <version>1.0.51</version>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.26</version>
+            <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.raml</groupId>
+            <artifactId>webapi-parser</artifactId>
+            <version>0.5.0</version>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>org.mule.amf</groupId>-->
+<!--            <artifactId>amf-client_2.12</artifactId>-->
+<!--            <version>1.4.0</version>-->
+<!--        </dependency>-->
 
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>MuleSoftReleases</id>
+            <url>https://repository-master.mulesoft.org/nexus/content/repositories/releases</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 
 </project>

@@ -1,0 +1,68 @@
+openapi: 3.0.0
+info:
+  title: Sample API
+  version: v1
+servers:
+- url: https://api.example.com/{version}
+  variables:
+    version:
+      default: ''
+consumes:
+- application/json
+produces:
+- application/json
+schemes:
+- HTTP
+- HTTPS
+externalDocs:
+  description: a ref maybe
+  x-amf-title: Something or another
+paths:
+  /endpoint:
+    x-amf-displayName: Example Endpoint
+    description: Sample endpoint description
+    get:
+      description: Get resource by ID
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                x-amf-merge:
+                - type: array
+                  items:
+                    $ref: '#/components/schemas/ObjectType'
+    post:
+      description: Create a new resource
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-amf-merge:
+              - $ref: '#/components/schemas/ObjectType'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                x-amf-merge:
+                - $ref: '#/components/schemas/ObjectType'
+      security:
+      - apiKey: []
+components:
+  schemas:
+    ObjectType:
+      type: object
+      required:
+      - id
+      - name
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
